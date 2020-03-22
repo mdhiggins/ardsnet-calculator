@@ -7,15 +7,15 @@
     <div class="container">
         {% if new.vt > old.vt %}
         <div class="alert alert-warning" role="alert">
-            Increase tidal volume to <strong>{{ new.vt }}</strong> from {{ old.vt }}
+            Increase tidal volume to <strong>{{ new.vt }}</strong> ml/kg from {{ old.vt }} ml/kg{% if absvt %} ({{ absvt }} ml){% endif %}
         </div>
         {% elif new.vt < old.vt %}
         <div class="alert alert-warning" role="alert">
-            Decrease tidal volume to <strong>{{ new.vt }}</strong> from {{ old.vt }}
+            Decrease tidal volume to <strong>{{ new.vt }}</strong> ml/kg from {{ old.vt }} ml/kg{% if absvt %} ({{ absvt }} ml){% endif %}
         </div>
         {% else %}
         <div class="alert alert-info" role="alert">
-            Maintain tidal volume of <strong>{{ new.vt }}</strong>
+            Maintain tidal volume of <strong>{{ new.vt }}</strong> ml/kg{% if absvt %} ({{ absvt }} ml){% endif %}
         </div>
         {% endif %}
         {% if new.rr > old.rr %}

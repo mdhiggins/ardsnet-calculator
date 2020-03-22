@@ -34,6 +34,12 @@ def flaskMainPost():
     current = Vent(vt, rr, fio2, peep)
     ards = ARDSNet(current)
     ards.adjustVent(ph, pao2, pplat, hp=(strategy == 'highpeep'))
+
+    if patient:
+        absvt = ards.vent.vt * patient.pbw
+    else:
+        absvt = 0
+
     return render_template(
         "main.j2",
         vent=ards.vent,
@@ -46,5 +52,6 @@ def flaskMainPost():
         patient=patient,
         gender=gender.value,
         height=height,
-        unit=unit.value
+        unit=unit.value,
+        absvt=absvt
     )
