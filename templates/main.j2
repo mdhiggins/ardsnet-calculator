@@ -1,0 +1,137 @@
+{% extends "layout.j2" %}
+{% block content %}
+
+<div class="container">
+    {% if new %}
+    <h4>Recommendations</h4>
+    <div class="container">
+        {% if new.vt > old.vt %}
+        <div class="alert alert-warning" role="alert">
+            Increase tidal volume to <strong>{{ new.vt }}</strong> from {{ old.vt }}
+        </div>
+        {% elif new.vt < old.vt %}
+        <div class="alert alert-warning" role="alert">
+            Decrease tidal volume to <strong>{{ new.vt }}</strong> from {{ old.vt }}
+        </div>
+        {% else %}
+        <div class="alert alert-info" role="alert">
+            Maintain tidal volume of <strong>{{ new.vt }}</strong>
+        </div>
+        {% endif %}
+        {% if new.rr > old.rr %}
+        <div class="alert alert-danger" role="alert">
+            Increase respiratory rate to <strong>{{ new.rr }}</strong> from {{ old.rr }}
+        </div>
+        {% elif new.rr < old.rr %}
+        <div class="alert alert-success" role="alert">
+            Decrease respiratory rate to <strong>{{ new.rr }}</strong> from {{ old.rr }}
+        </div>
+        {% else %}
+        <div class="alert alert-info" role="alert">
+            Maintain  respiratory rate of <strong>{{ new.rr }}</strong>
+        </div>
+        {% endif %}
+        {% if new.fio2 > old.fio2 %}
+        <div class="alert alert-danger" role="alert">
+            Increase FIO2 to <strong>{{ new.fio2String }}</strong> from {{ old.fio2String }}
+        </div>
+        {% elif new.fio2 < old.fio2 %}
+        <div class="alert alert-success" role="alert">
+            Decrease FIO2 to <strong>{{ new.fio2String }}</strong> from {{ old.fio2String }}
+        </div>
+        {% else %}
+        <div class="alert alert-info" role="alert">
+            Maintain FIO2 of <strong>{{ new.fio2String }}</strong>
+        </div>
+        {% endif %}
+        {% if new.peep > old.peep %}
+        <div class="alert alert-danger" role="alert">
+            Increase PEEP to <strong>{{ new.peep }}</strong> from {{ old.peep }}
+        </div>
+        {% elif new.peep < old.peep %}
+        <div class="alert alert-success" role="alert">
+            Decrease PEEP to <strong>{{ new.peep }}</strong> from {{ old.peep }}
+        </div>
+        {% else %}
+        <div class="alert alert-info" role="alert">
+            Maintain PEEP of <strong>{{ new.peep }}</strong>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+    <form id="vent" method="POST" action="/">
+        <div class="form-group">
+            <h5>Current Vent Settings</h5>
+            <label for="vt">Weight Based Tidal Volume</label>
+            <input type="number" name="vt" class="form-control" id="vt" min="0" step="0.1" placeholder="ml/kg" value="{{ vt }}" required>
+            <small id="vtHelp" class="form-text text-muted">
+                If Pplat < 30 and breath stacking or dys-synchrony occurs: may
+                increase VT in 1ml/kg increments to 7 or 8 ml/kg if Pplat remains < 30 cm H2O. 
+            </small>
+            <label for="rr">Respiratory Rate</label>
+            <input type="number" name="rr" class="form-control" id="rr" min="0" step="1"  placeholder="" value="{{ rr }}" required>
+            <label for="fio2">FiO2</label>
+            <input type="number" name="fio2" class="form-control" id="fio2" min="0" step="1" placeholder="%" value="{{ fio2 }}" required>
+            <label for="peep">PEEP</label>
+            <input type="number" name="peep" class="form-control" id="peep" min="0" step="1" placeholder="" value="{{ peep }}" required>
+        </div>
+        <hr />
+        <div class="form-group">
+            <h5>Current Status</h5>
+            <label for="pao2">PAO2</label>
+            <input type="number" name="pao2" class="form-control" id="pao2" min="0" step="1" value="">
+            <label for="pplat">Pplat</label>
+            <input type="number" name="pplat" class="form-control" id="pplat" min="0" step="1" value="">
+            <small id="pplatHelp" class="form-text text-muted">Instructions for pplat</small>
+            <label for="ph">pH</label>
+            <input type="number" name="ph" class="form-control" id="ph" min="6.0" max="8.0" step="0.01" value="">
+            <small id="pHHelp" class="form-text text-muted">
+                If pH remains < 7.15, VT may be increased in 1 ml/kg steps until pH >
+                7.15 (Pplat target of 30 may be exceeded).
+                May give NaHCO3.
+            </small>
+            <div class="input-group">
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="strategy" id="lowpeep" value="lowpeep" {% if strategy == "lowpeep" %}checked{% endif %}>
+                    <label class="form-check-label" for="lowpeep">Lower PEEP Higher FiO2</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="strategy" id="highpeep" value="highpeep" {% if strategy == "highpeep" %}checked{% endif %}>
+                    <label class="form-check-label" for="highpeep">Higher PEEP Lower FiO2</label>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <h5>Patient Information</h5>
+            <div class="form-group">
+                <div class="input-group">
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="gender" id="male" value="male" {% if gender == "male" %}checked{% endif %}>
+                        <label class="form-check-label" for="male">Male</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="gender" id="female" value="female" {% if gender == "female" %}checked{% endif %}>
+                        <label class="form-check-label" for="female">Female</label>
+                    </div>
+                </div>
+            </div>
+            <label for="height">Height</label>
+            <input type="number" name="height" class="form-control" id="height" min="0" step="0.1"  placeholder="" value="{{ height }}">
+            <div class="input-group">
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="unit" id="cm" value="cm" {% if unit == "cm" %}checked{% endif %}>
+                    <label class="form-check-label" for="cm">cm</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="unit" id="in" value="in" {% if unit == "in" %}checked{% endif %}>
+                    <label class="form-check-label" for="in">in</label>
+                </div>
+            </div>
+        </div>
+        <hr />
+        <button type="submit" class="btn btn-primary">Recommend New Vent Settings</button>
+    </form>
+</div>
+<br />
+
+{% endblock %}
