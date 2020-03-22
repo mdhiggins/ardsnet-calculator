@@ -27,7 +27,7 @@ class Patient():
 
     @property
     def pbw(self):
-        return __PBW_BASE_VALUE.get(self.gender) + (2.3 * (self.height - 60))
+        return self.__PBW_BASE_VALUE.get(self.gender) + (2.3 * (self.height - 60))
 
 
 class Vent():
