@@ -72,7 +72,7 @@ def flaskMainPost():
 
     # Calculate PBW
     gender = request.form.get('gender', Gender.Male, type=Gender)
-    height = request.form.get('height', type=float)
+    heightraw = request.form.get('height', type=float)
     heightunit = request.form.get('heightunit', HeightUnit.Inch, type=HeightUnit)
 
     # Vent settings
@@ -90,8 +90,9 @@ def flaskMainPost():
     strategy = request.form.get('strategy')
 
     # Conver to inches
+    height = heightraw
     if heightunit == HeightUnit.Centimeter:
-        height = height / 0.3937008
+        height = height / 2.54
 
     if not pbw and gender and height:
         patient = Patient(gender, height)
@@ -128,7 +129,7 @@ def flaskMainPost():
             fio2=fio2,
             peep=peep,
             pbw=pbw,
-            height=height,
+            height=heightraw,
             o2=o2,
             pplat=pplat,
             ph=ph
@@ -181,14 +182,14 @@ def flaskMainPost():
         vttype=vttype.value,
         o2type=o2type.value,
         vent=ards.vent,
-        vt=round(newvt, 2),
+        vt=round(newvt, 0),
         rr=ards.vent.rr,
         fio2=round(ards.vent.fio2 * 100),
         peep=ards.vent.peep,
         new=newvent,
         old=oldvent,
-        pbw=pbw,
-        height=height,
+        pbw=round(pbw, 2),
+        height=round(heightraw, 2),
         absvt=absvt,
         verbose=verbose,
         lastph=ph,
