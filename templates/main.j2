@@ -7,15 +7,15 @@
     <div class="container">
         {% if new.vt > old.vt %}
         <div class="alert alert-warning" role="alert">
-            Increase tidal volume to <strong>{{ new.vt }}</strong> ml/kg from {{ old.vt }} ml/kg{% if absvt %} ({{ absvt }} ml){% endif %}
+            Increase tidal volume to <strong>{{ new.vt | round(2) }}</strong> ml/kg from {{ old.vt | round(2) }} ml/kg{% if absvt %} ({{ absvt | round }} ml){% endif %}
         </div>
         {% elif new.vt < old.vt %}
         <div class="alert alert-warning" role="alert">
-            Decrease tidal volume to <strong>{{ new.vt }}</strong> ml/kg from {{ old.vt }} ml/kg{% if absvt %} ({{ absvt }} ml){% endif %}
+            Decrease tidal volume to <strong>{{ new.vt | round(2) }}</strong> ml/kg from {{ old.vt | round(2) }} ml/kg{% if absvt %} ({{ absvt | round }} ml){% endif %}
         </div>
         {% else %}
         <div class="alert alert-info" role="alert">
-            Maintain tidal volume of <strong>{{ new.vt }}</strong> ml/kg{% if absvt %} ({{ absvt }} ml){% endif %}
+            Maintain tidal volume of <strong>{{ new.vt | round(2) }}</strong> ml/kg{% if absvt %} ({{ absvt | round }} ml){% endif %}
         </div>
         {% endif %}
         {% if new.rr > old.rr %}
@@ -61,47 +61,6 @@
     {% endif %}
     <form id="vent" method="POST" action="/">
         <div class="form-group">
-            <h5>Current Vent Settings</h5>
-            <label for="vt">Weight Based Tidal Volume</label>
-            <input type="number" name="vt" class="form-control" id="vt" min="0" step="0.1" placeholder="ml/kg" value="{{ vt }}" required>
-            <small id="vtHelp" class="form-text text-muted">
-                If Pplat < 30 and breath stacking or dys-synchrony occurs: may
-                increase VT in 1ml/kg increments to 7 or 8 ml/kg if Pplat remains < 30 cm H2O. 
-            </small>
-            <label for="rr">Respiratory Rate</label>
-            <input type="number" name="rr" class="form-control" id="rr" min="0" step="1"  placeholder="" value="{{ rr }}" required>
-            <label for="fio2">FiO2</label>
-            <input type="number" name="fio2" class="form-control" id="fio2" min="0" step="1" placeholder="%" value="{{ fio2 }}" required>
-            <label for="peep">PEEP</label>
-            <input type="number" name="peep" class="form-control" id="peep" min="0" step="1" placeholder="" value="{{ peep }}" required>
-        </div>
-        <hr />
-        <div class="form-group">
-            <h5>Current Status</h5>
-            <label for="pao2">PAO2</label>
-            <input type="number" name="pao2" class="form-control" id="pao2" min="0" step="1" value="">
-            <label for="pplat">Pplat</label>
-            <input type="number" name="pplat" class="form-control" id="pplat" min="0" step="1" value="">
-            <small id="pplatHelp" class="form-text text-muted">Instructions for pplat</small>
-            <label for="ph">pH</label>
-            <input type="number" name="ph" class="form-control" id="ph" min="6.0" max="8.0" step="0.01" value="">
-            <small id="pHHelp" class="form-text text-muted">
-                If pH remains < 7.15, VT may be increased in 1 ml/kg steps until pH >
-                7.15 (Pplat target of 30 may be exceeded).
-                May give NaHCO3.
-            </small>
-            <div class="input-group">
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="strategy" id="lowpeep" value="lowpeep" {% if strategy == "lowpeep" %}checked{% endif %}>
-                    <label class="form-check-label" for="lowpeep">Lower PEEP Higher FiO2</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="strategy" id="highpeep" value="highpeep" {% if strategy == "highpeep" %}checked{% endif %}>
-                    <label class="form-check-label" for="highpeep">Higher PEEP Lower FiO2</label>
-                </div>
-            </div>
-        </div>
-        <div class="form-group">
             <h5>Patient Information</h5>
             <div class="form-group">
                 <div class="input-group">
@@ -125,6 +84,74 @@
                 <div class="form-check form-check-inline">
                     <input class="form-check-input" type="radio" name="unit" id="in" value="in" {% if unit == "in" %}checked{% endif %}>
                     <label class="form-check-label" for="in">in</label>
+                </div>
+            </div>
+            <small id="heightHelp" class="form-text text-muted">
+                Height will be used to calculate ideal bodyweight
+            </small>
+        </div>
+        <hr />
+        <div class="form-group">
+            <h5>Current Vent Settings</h5>
+            <label for="vt">Tidal Volume</label>
+            <input type="number" name="vt" class="form-control" id="vt" min="0" step="0.1" value="{{ vt }}" required>
+            <div class="input-group">
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="vttype" id="ml" value="ml" {% if vttype == "ml" %}checked{% endif %}>
+                    <label class="form-check-label" for="ml">ml</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="vttype" id="mlkg" value="mlkg" {% if vttype == "mlkg" %}checked{% endif %}>
+                    <label class="form-check-label" for="mlkg">ml/kg</label>
+                </div>
+            </div>
+            <small id="vtHelp" class="form-text text-muted">
+                If Pplat < 30 and breath stacking or dys-synchrony occurs: may
+                increase VT in 1ml/kg increments to 7 or 8 ml/kg if Pplat remains < 30 cm H2O.
+            </small>
+            <label for="rr">Respiratory Rate</label>
+            <input type="number" name="rr" class="form-control" id="rr" min="0" step="1"  placeholder="" value="{{ rr }}" required>
+            <small id="rrHelp" class="form-text text-muted">
+                I:E ratio recommended that duration of inspiration be =< duration of expiration
+            </small>
+            <label for="fio2">FiO2</label>
+            <input type="number" name="fio2" class="form-control" id="fio2" min="0" step="1" placeholder="%" value="{{ fio2 }}" required>
+            <label for="peep">PEEP</label>
+            <input type="number" name="peep" class="form-control" id="peep" min="0" step="1" placeholder="" value="{{ peep }}" required>
+        </div>
+        <hr />
+        <div class="form-group">
+            <h5>Current Status</h5>
+            <label for="pao2">Oxygen</label>
+            <input type="number" name="o2" class="form-control" id="o2" min="0" step="1" value="">
+            <div class="input-group">
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="o2type" id="pao2" value="pao2" {% if o2type == "pao2" %}checked{% endif %}>
+                    <label class="form-check-label" for="pao2">PaO2</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="o2type" id="spo2" value="spo2" {% if o2type == "spo2" %}checked{% endif %}>
+                    <label class="form-check-label" for="spo2">SpO2</label>
+                </div>
+            </div>
+            <label for="pplat">Plateu Pressure</label>
+            <input type="number" name="pplat" class="form-control" id="pplat" min="0" step="1" value="">
+            <small id="pplatHelp" class="form-text text-muted">Check Pplat (0.5 second inspiratory pause), at least q 4h and after each change in PEEP or Vt</small>
+            <label for="ph">pH</label>
+            <input type="number" name="ph" class="form-control" id="ph" min="6.0" max="8.0" step="0.01" value="">
+            <small id="pHHelp" class="form-text text-muted">
+                If pH remains < 7.15, Vt may be increased in 1 ml/kg steps until pH >
+                7.15 (Pplat target of 30 may be exceeded).
+                May give NaHCO3.
+            </small>
+            <div class="input-group">
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="strategy" id="lowpeep" value="lowpeep" {% if strategy == "lowpeep" %}checked{% endif %}>
+                    <label class="form-check-label" for="lowpeep">Lower PEEP Higher FiO2</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="strategy" id="highpeep" value="highpeep" {% if strategy == "highpeep" %}checked{% endif %}>
+                    <label class="form-check-label" for="highpeep">Higher PEEP Lower FiO2</label>
                 </div>
             </div>
         </div>

@@ -14,7 +14,7 @@ class Unit(enum.Enum):
 
 
 class Patient():
-    __PBW_BASE_VALUE = {
+    __PBW_BASE_VALUE__ = {
         Gender.Male: 50.0,
         Gender.Female: 45.5,
     }
@@ -27,7 +27,7 @@ class Patient():
 
     @property
     def pbw(self):
-        return self.__PBW_BASE_VALUE.get(self.gender) + (2.3 * (self.height - 60))
+        return self.__PBW_BASE_VALUE__.get(self.gender) + (2.3 * (self.height - 60))
 
 
 class Vent():
@@ -68,9 +68,13 @@ class ARDSNet():
 
     __VT_MIN__ = 4
     __VT_MAX__ = 8
+    __VT_GOAL__ = 6
 
     __PAO2_MIN__ = 55
     __PAO2_MAX__ = 80
+
+    __SPO2_MIN__ = 89
+    __SPO2_MAX__ = 95
 
     __LOWER_PEEP_HIGHER_FIO2__ = [
         (0.3, 5),
@@ -110,6 +114,15 @@ class ARDSNet():
         (1.0, 22),
         (1.0, 24)
     ]
+    __SPO2_TO_PAO2__ = {
+        89: 56.0,
+        90: 58.0,
+        91: 60.0,
+        92: 64.0,
+        93: 68.0,
+        94: 73.0,
+        95: 80.0,
+    }
 
     def __init__(self, vent, patient=None):
         self.patient = patient
@@ -120,30 +133,35 @@ class ARDSNet():
         self.vent = vent
         self.venthistory[datetime.now] = vent
 
-    '''
-    @property
-    def vent(self):
-        return next([k for k in self.venthistory.keys()])
-    '''
+    @staticmethod
+    def spo2ToPaO2(spo2):
+        spo2 = int(spo2)
+        if spo2 <= ARDSNet.__SPO2_MIN__:
+            return ARDSNet.__PAO2_MIN__
+        if spo2 >= ARDSNet.__SPO2_MAX__:
+            return ARDSNet.__PAO2_MAX__
+        return ARDSNet.__SPO2_TO_PAO2__.get(spo2)
 
-    def adjustVent(self, ph=None, pao2=None, pplat=None, hp=False):
+    def adjustVent(self, ph=None, o2=None, pplat=None, hp=False):
         new = Vent(self.vent.vt, self.vent.rr, self.vent.fio2, self.vent.peep)
-        if pao2:
-            lphf, hplf = self.adjustByPaO2(pao2, self.vent.fio2, self.vent.peep)
+        if o2:
+            lphf, hplf = self.adjustByPaO2(o2, self.vent.fio2, self.vent.peep)
             new.fio2, new.peep = hplf if hp else lphf
         if pplat:
             new.vt = self.adjustByPplat(pplat, self.vent.vt)
         if ph:
             new.vt, new.rr = self.adjustBypH(ph, new.vt, self.vent.rr)
+        if new.vt > self.__VT_GOAL__ and self.vent.vt == new.vt:
+            new.vt = round(new.vt) - 1
         if new != self.vent:
             self.updateVentSettings(new)
         return new
 
     def adjustByPplat(self, pplat, vt):
         if pplat > self.__PPLAT_MAX__:
-            vt = vt - 1
+            vt = round(vt) - 1
         elif pplat < self.__PPLAT_MIN__ and vt < 6:
-            vt = vt + 1
+            vt = round(vt) + 1
         return vt
 
     def adjustBypH(self, pH, vt, rr):
@@ -152,7 +170,7 @@ class ARDSNet():
                 rr = self.__RR_MAX__
             else:
                 rr = self.__RR_MAX__
-                vt = vt + 1
+                vt = round(vt) + 1
         elif pH < self.__PH_GOAL_MIN__ and rr < self.__RR_MAX__:
             rr = rr + 2
             if rr > self.__RR_MAX__:
@@ -160,6 +178,10 @@ class ARDSNet():
         elif pH > self.__PH_GOAL_MAX__:
             rr = rr - 2
         return vt, rr
+
+    def adjustBySpO2(self, spo2, fio2, peep):
+        pao2 = self.spo2ToPaO2(spo2)
+        return self.adjustByPaO2(pao2, fio2, peep)
 
     def adjustByPaO2(self, pao2, fio2, peep):
         lphf = (fio2, peep)
