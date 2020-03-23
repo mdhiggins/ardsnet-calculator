@@ -56,13 +56,13 @@
         <div class="alert alert-info" role="alert">
             Maintain PEEP of <strong>{{ new.peep }}</strong>
         </div>
+        {% endif %}
         {% if verbose %}
         <div class="card h-100"><div class="card-body">
             <h6 class="card-title">Change Statement</h5>
             <pre>{{ verbose }}</pre>
         </div></div>
         <hr />
-        {% endif %}
         {% endif %}
     </div>
     {% endif %}
@@ -73,7 +73,7 @@
                 <div class="card h-100"><div class="card-body">
                     <h5 class="card-title">Known Ideal Body Weight</h5>
                     <label for="pbw">IBW</label>
-                    <input type="number" name="pbw" class="form-control" id="pbw" min="0" step="0.5" value="{{ pbw }}">
+                    <input type="number" name="pbw" class="form-control" id="pbw" min="0" step="0.1" value="{{ pbw }}">
                     <div class="input-group">
                         <div class="form-check form-check-inline">
                             <input class="form-check-input" type="radio" name="weightunit" id="kg" value="kg" {% if weightunit == "kg" %}checked{% endif %}>
