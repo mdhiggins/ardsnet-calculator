@@ -85,8 +85,8 @@ def flaskMainPost():
     if heightunit == HeightUnit.Centimeter:
         height = height / 0.3937008
 
-    if not pbw and gender and height and heightunit:
-        patient = Patient(gender, height, heightunit)
+    if not pbw and gender and height:
+        patient = Patient(gender, height)
         pbw = patient.pbw
 
     # Probably already in ml/kg
