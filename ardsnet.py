@@ -189,8 +189,6 @@ class ARDSNet():
         elif pao2 > self.__PAO2_MAX__:
             hl = [x for x in self.__LOWER_PEEP_HIGHER_FIO2__[::-1] if (x[0] <= fio2 and x[1] < peep) or (x[0] < fio2 and x[1] <= peep)]
             hh = [x for x in self.__HIGHER_PEEP_LOWER_FIO2__[::-1] if (x[0] <= fio2 and x[1] < peep) or (x[0] < fio2 and x[1] <= peep)]
-            logging.error(hl)
-            logging.error(hh)
             if len(hl) > 0:
                 lphf = hl[0]
             if len(hh) > 0:
