@@ -51,6 +51,13 @@ def verboseOutput(oldvent, newvent, strategy, pbw, o2, pplat, ph):
     return base
 
 
+def safeRound(value, place=0):
+    try:
+        return round(value, place)
+    except:
+        return None
+
+
 @app.route("/")
 def flaskMain():
     return render_template(
@@ -111,8 +118,22 @@ def flaskMainPost():
     if vttype == Volume.Ml and not pbw:
         flash("If using an absolute tidal volume a predicted body weight must be provided or calculated", "danger")
         bad = True
-    if vttype == Volume.MlKg and (vt > 10 or vt < 3):
-        flash("Tidal volumes outside ARDSNet range and recommendations will be inaccurate")
+
+    if not o2 and not pplat and not ph:
+        flash("You did not enter any new data, no new vent changes will be recommended", "warning")
+        bad = True
+
+    # FiO2
+    if fio2 > 1:
+        fio2 = fio2 / 100
+
+    # Convert VT to weight based
+    vtraw = vt
+    if vttype == Volume.Ml and pbw:
+        vt = vt / pbw
+
+    if round(vt) > 8 or round(vt) < 4:
+        flash("Tidal volumes outside ARDSNet range and recommendations will be inaccurate", "warning")
         bad = True
 
     if bad:
@@ -124,24 +145,16 @@ def flaskMainPost():
             strategy=strategy,
             vttype=vttype.value,
             o2type=o2type.value,
-            vt=vt,
+            vt=safeRound(vtraw, 2),
             rr=rr,
-            fio2=fio2,
+            fio2=safeRound(fio2 * 100),
             peep=peep,
             pbw=pbw,
-            height=heightraw,
+            height=safeRound(heightraw, 2),
             o2=o2,
             pplat=pplat,
             ph=ph
         )
-
-    # FiO2
-    if fio2 > 1:
-        fio2 = fio2 / 100
-
-    # Convert VT to weight based
-    if vttype == Volume.Ml and pbw:
-        vt = vt / pbw
 
     # Oxygen unit conversion
     lasto2 = o2
@@ -150,7 +163,7 @@ def flaskMainPost():
 
     # Recommendations
     if ph and ph < ARDSNet.__PH_MIN__ and rr and rr == ARDSNet.__RR_MAX__:
-        flash("pH very low. Consider metabolic causes. VT may be increased in 1 ml/kg steps until pH >7.15 (Pplat target of 30 may be exceeded). May give NaHCO3", "danger")
+        flash("pH very low. Consider metabolic causes. Vt may be increased in 1 ml/kg steps until pH >7.15 (Pplat target of 30 may be exceeded). May give NaHCO3", "danger")
     if pplat and pplat > ARDSNet.__PPLAT_MAX__:
         flash("Plateau pressures elevated. Consider more sedation or paralysis if vent adjustments are failing to improve pressures", "warning")
     if o2 and ph and fio2 and peep and o2 > ARDSNet.__PAO2_MAX__ and ph > ARDSNet.__PH_GOAL_MIN__ and ((fio2 <= 0.4 and peep <= 8 and rr) or (fio2 <= 0.5 and peep <= 5)):
@@ -182,14 +195,14 @@ def flaskMainPost():
         vttype=vttype.value,
         o2type=o2type.value,
         vent=ards.vent,
-        vt=round(newvt, 0),
+        vt=safeRound(newvt, 0),
         rr=ards.vent.rr,
-        fio2=round(ards.vent.fio2 * 100),
+        fio2=safeRound(ards.vent.fio2 * 100),
         peep=ards.vent.peep,
         new=newvent,
         old=oldvent,
-        pbw=round(pbw, 2),
-        height=round(heightraw, 2),
+        pbw=safeRound(pbw, 2),
+        height=safeRound(heightraw, 2),
         absvt=absvt,
         verbose=verbose,
         lastph=ph,

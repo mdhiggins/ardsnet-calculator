@@ -89,6 +89,7 @@
                     </small>
                 </div></div>
             </div>
+            <div class="d-md-none">&nbsp;</div>
             <div class="col-md">
                 <div class="card"><div class="card-body">
                     <h5 class="card-title">Calculate Ideal Body Weight</h5>
@@ -123,71 +124,80 @@
             </div>
         </div>
         <hr />
-        <div class="card"><div class="card-body">
-            <h5 class="card-title">Current Vent Settings</h5>
-            <label for="vt">Tidal Volume</label>
-            <input type="number" name="vt" class="form-control" id="vt" min="0" step="0.1" value="{{ vt }}" required>
-            <div class="input-group">
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="vttype" id="ml" value="ml" {% if vttype == "ml" %}checked{% endif %}>
-                    <label class="form-check-label" for="ml">ml</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="vttype" id="mlkg" value="mlkg" {% if vttype == "mlkg" %}checked{% endif %}>
-                    <label class="form-check-label" for="mlkg">ml/kg</label>
-                </div>
+        <div class="row">
+            <div class="col-md">
+                <div class="card h-100"><div class="card-body">
+                    <h5 class="card-title">Current Vent Settings</h5>
+                    <label for="vt">Tidal Volume</label>
+                    <input type="number" name="vt" class="form-control" id="vt" min="0" step="0.1" value="{{ vt }}" required>
+                    <div class="input-group">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="vttype" id="ml" value="ml" {% if vttype == "ml" %}checked{% endif %}>
+                            <label class="form-check-label" for="ml">ml</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="vttype" id="mlkg" value="mlkg" {% if vttype == "mlkg" %}checked{% endif %}>
+                            <label class="form-check-label" for="mlkg">ml/kg</label>
+                        </div>
+                    </div>
+                    <small id="vtHelp" class="form-text text-muted">
+                        If plateau pressure < 30 and breath stacking or dys-synchrony occurs: may
+                        increase VT in 1ml/kg increments to 7 or 8 ml/kg if Pplat remains < 30 cm H2O.
+                    </small>
+                    <label for="rr">Respiratory Rate</label>
+                    <input type="number" name="rr" class="form-control" id="rr" min="0" max="60" step="1"  placeholder="" value="{{ rr }}" required>
+                    <small id="rrHelp" class="form-text text-muted">
+                        I:E ratio recommended that duration of inspiration be =< duration of expiration
+                    </small>
+                    <label for="fio2">FiO2</label>
+                    <input type="number" name="fio2" class="form-control" id="fio2" min="0" max="100" step="1" placeholder="%" value="{{ fio2 }}" required>
+                    <label for="peep">PEEP</label>
+                    <input type="number" name="peep" class="form-control" id="peep" max="30" min="0" step="1" placeholder="" value="{{ peep }}" required>
+                </div></div>
             </div>
-            <small id="vtHelp" class="form-text text-muted">
-                If plateau pressure < 30 and breath stacking or dys-synchrony occurs: may
-                increase VT in 1ml/kg increments to 7 or 8 ml/kg if Pplat remains < 30 cm H2O.
-            </small>
-            <label for="rr">Respiratory Rate</label>
-            <input type="number" name="rr" class="form-control" id="rr" min="0" step="1"  placeholder="" value="{{ rr }}" required>
-            <small id="rrHelp" class="form-text text-muted">
-                I:E ratio recommended that duration of inspiration be =< duration of expiration
-            </small>
-            <label for="fio2">FiO2</label>
-            <input type="number" name="fio2" class="form-control" id="fio2" min="0" step="1" placeholder="%" value="{{ fio2 }}" required>
-            <label for="peep">PEEP</label>
-            <input type="number" name="peep" class="form-control" id="peep" min="0" step="1" placeholder="" value="{{ peep }}" required>
-        </div></div>
-        <hr />
-        <div class="card"><div class="card-body">
-            <h5 class="card-title">Current Status</h5>
-            <label for="pao2">Oxygen</label>
-            <input type="number" name="o2" class="form-control" id="o2" min="0" step="1" placeholder="{{ lasto2 }}" value="{{ o2 }}">
-            <div class="input-group">
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="o2type" id="pao2" value="pao2" {% if o2type == "pao2" %}checked{% endif %}>
-                    <label class="form-check-label" for="pao2">PaO2</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="o2type" id="spo2" value="spo2" {% if o2type == "spo2" %}checked{% endif %}>
-                    <label class="form-check-label" for="spo2">SpO2</label>
-                </div>
+            <div class="d-md-none">&nbsp;</div>
+            <div class="col-md">
+                <div class="card h-100"><div class="card-body">
+                    <h5 class="card-title">Current Status</h5>
+                    <label for="pao2">Oxygen</label>
+                    <input type="number" name="o2" class="form-control" id="o2" min="0" step="1" placeholder="{{ lasto2 }}" value="{{ o2 }}">
+                    <div class="input-group">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="o2type" id="pao2" value="pao2" {% if o2type == "pao2" %}checked{% endif %}>
+                            <label class="form-check-label" for="pao2">PaO2</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="o2type" id="spo2" value="spo2" {% if o2type == "spo2" %}checked{% endif %}>
+                            <label class="form-check-label" for="spo2">SpO2</label>
+                        </div>
+                    </div>
+                    <small id="pao2Help" class="form-text text-muted">
+                        PaO2 must come from an ABG
+                    </small>
+                    <label for="pplat">Plateau Pressure</label>
+                    <input type="number" name="pplat" class="form-control" id="pplat" min="0" step="1" max="60" placeholder="{{ lastpplat }}" value="{{ pplat }}">
+                    <small id="pplatHelp" class="form-text text-muted">Check Pplat (0.5 second inspiratory pause), at least q 4h and after each change in PEEP or Vt</small>
+                    <label for="ph">pH</label>
+                    <input type="number" name="ph" class="form-control" id="ph" min="6.0" max="8.0" step="0.01" placeholder="{{ lastph }}" value="{{ ph }}">
+                    <small id="pHHelp" class="form-text text-muted">
+                        If pH remains < 7.15, Vt may be increased in 1 ml/kg steps until pH >
+                        7.15 (plateau pressure target of 30 may be exceeded).
+                        May give NaHCO3.
+                    </small>
+                    <br />
+                    <div class="input-group">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="strategy" id="lowpeep" value="lowpeep" {% if strategy == "lowpeep" %}checked{% endif %}>
+                            <label class="form-check-label" for="lowpeep">Lower PEEP Higher FiO2</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="strategy" id="highpeep" value="highpeep" {% if strategy == "highpeep" %}checked{% endif %}>
+                            <label class="form-check-label" for="highpeep">Higher PEEP Lower FiO2</label>
+                        </div>
+                    </div>
+                </div></div>
             </div>
-            <label for="pplat">Plateau Pressure</label>
-            <input type="number" name="pplat" class="form-control" id="pplat" min="0" step="1" placeholder="{{ lastpplat }}" value="{{ pplat }}">
-            <small id="pplatHelp" class="form-text text-muted">Check Pplat (0.5 second inspiratory pause), at least q 4h and after each change in PEEP or Vt</small>
-            <label for="ph">pH</label>
-            <input type="number" name="ph" class="form-control" id="ph" min="6.0" max="8.0" step="0.01" placeholder="{{ lastph }}" value="{{ ph }}">
-            <small id="pHHelp" class="form-text text-muted">
-                If pH remains < 7.15, Vt may be increased in 1 ml/kg steps until pH >
-                7.15 (plateau pressure target of 30 may be exceeded).
-                May give NaHCO3.
-            </small>
-            <br />
-            <div class="input-group">
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="strategy" id="lowpeep" value="lowpeep" {% if strategy == "lowpeep" %}checked{% endif %}>
-                    <label class="form-check-label" for="lowpeep">Lower PEEP Higher FiO2</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="strategy" id="highpeep" value="highpeep" {% if strategy == "highpeep" %}checked{% endif %}>
-                    <label class="form-check-label" for="highpeep">Higher PEEP Lower FiO2</label>
-                </div>
-            </div>
-        </div></div>
+        </div>
         <hr />
         <button type="submit" class="btn btn-primary float-center">Recommend New Vent Settings</button>
     </form>
