@@ -187,12 +187,12 @@
                     <br />
                     <div class="input-group">
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="strategy" id="lowpeep" value="lowpeep" {% if strategy == "lowpeep" %}checked{% endif %}>
-                            <label class="form-check-label" for="lowpeep">Lower PEEP Higher FiO2</label>
-                        </div>
-                        <div class="form-check form-check-inline">
                             <input class="form-check-input" type="radio" name="strategy" id="highpeep" value="highpeep" {% if strategy == "highpeep" %}checked{% endif %}>
                             <label class="form-check-label" for="highpeep">Higher PEEP Lower FiO2</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="strategy" id="lowpeep" value="lowpeep" {% if strategy == "lowpeep" %}checked{% endif %}>
+                            <label class="form-check-label" for="lowpeep">Lower PEEP Higher FiO2</label>
                         </div>
                     </div>
                 </div></div>
