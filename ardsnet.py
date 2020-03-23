@@ -155,6 +155,10 @@ class ARDSNet():
             vt = round(vt) - 1
         elif pplat < self.__PPLAT_MIN__ and vt < 6:
             vt = round(vt) + 1
+        if vt > self.__VT_MAX__:
+            vt = self.__VT_MAX__
+        elif vt < self.__VT_MIN__:
+            vt = self.__VT_MIN__
         return vt
 
     def adjustBypH(self, pH, vt, rr):
@@ -164,6 +168,8 @@ class ARDSNet():
             else:
                 rr = self.__RR_MAX__
                 vt = round(vt) + 1
+                if vt > self.__VT_MAX__:
+                    vt = self.__VT_MAX__
         elif pH < self.__PH_GOAL_MIN__ and rr < self.__RR_MAX__:
             rr = rr + 2
             if rr > self.__RR_MAX__:
