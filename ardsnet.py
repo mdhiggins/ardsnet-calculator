@@ -48,6 +48,11 @@ class Vent():
     def fio2String(self):
         return "%0.0f%%" % (self.fio2 * 100)
 
+    def __eq__(self, other):
+        if isinstance(other, Vent):
+            return self.vt == other.vt and self.rr == other.rr and self.fio2 == other.fio2 and self.peep == other.peep
+        return False
+
 
 class ARDSNet():
     __PPLAT_MAX__ = 30

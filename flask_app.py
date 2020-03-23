@@ -32,15 +32,23 @@ class HeightUnit(Enum):
 def verboseOutput(oldvent, newvent, strategy, pbw, o2, pplat, ph):
     strategy = "Lower Peep Higher FiO2" if strategy == "lowpeep" else "Higher Peep Lower FiO2"
     pbw = pbw or 0.0
-    return "Changing vent settings from %s to %s based on ARDSNet protocol using pH %0.02f, PaO2 %d, plateau pressure %d, with IBW %0.02f (%s strategy)" % (
-        oldvent,
-        newvent,
-        ph,
-        o2,
-        pplat,
-        pbw,
-        strategy
-    )
+    if newvent == oldvent:
+        base = "Maintaining vent settings %s based on ARDSNet protocol with " % (oldvent)
+    else:
+        base = "Changing vent settings from %s to %s based on ARDSNet protocol with " % (oldvent, newvent)
+
+    if ph:
+        base = "%s pH %0.02f, " % (base[:-1], ph)
+    if o2:
+        base = "%s PaO2 %d, " % (base[:-1], o2)
+    if pplat:
+        base = "%s Pplat %d, " % (base[:-1], pplat)
+    if pbw:
+        base = "%s with IBW %0.02f, " % (base[:-1], pbw)
+
+    base = "%s %s strategy" % (base[:-1], strategy)
+
+    return base
 
 
 @app.route("/")
@@ -140,11 +148,11 @@ def flaskMainPost():
         o2 = ARDSNet.spo2ToPaO2(o2)
 
     # Recommendations
-    if ph < ARDSNet.__PH_MIN__ and rr == ARDSNet.__RR_MAX__:
+    if ph and ph < ARDSNet.__PH_MIN__ and rr and rr == ARDSNet.__RR_MAX__:
         flash("pH very low. Consider metabolic causes. VT may be increased in 1 ml/kg steps until pH >7.15 (Pplat target of 30 may be exceeded). May give NaHCO3", "danger")
-    if pplat > ARDSNet.__PPLAT_MAX__:
+    if pplat and pplat > ARDSNet.__PPLAT_MAX__:
         flash("Plateau pressures elevated. Consider more sedation or paralysis if vent adjustments are failing to improve pressures", "warning")
-    if o2 > ARDSNet.__PAO2_MAX__ and ph > ARDSNet.__PH_GOAL_MIN__ and ((fio2 <= 0.4 and peep <= 8 and rr) or (fio2 <= 0.5 and peep <= 5)):
+    if o2 and ph and fio2 and peep and o2 > ARDSNet.__PAO2_MAX__ and ph > ARDSNet.__PH_GOAL_MIN__ and ((fio2 <= 0.4 and peep <= 8 and rr) or (fio2 <= 0.5 and peep <= 5)):
         flash("Vent settings improving from oxygenation standpoint, reviewing weaning section of ARDSNet card", "success")
 
     oldvent = Vent(vt, rr, fio2, peep)
