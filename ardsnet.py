@@ -122,11 +122,13 @@ class ARDSNet():
 
     @staticmethod
     def spo2ToPaO2(spo2):
+        if not spo2:
+            return None
         spo2 = int(spo2)
         if spo2 <= ARDSNet.__SPO2_MIN__:
-            return ARDSNet.__PAO2_MIN__
+            return ARDSNet.__PAO2_MIN__ - 1
         if spo2 >= ARDSNet.__SPO2_MAX__:
-            return ARDSNet.__PAO2_MAX__
+            return ARDSNet.__PAO2_MAX__ + 1
         return ARDSNet.__SPO2_TO_PAO2__.get(spo2)
 
     def adjustVent(self, ph=None, o2=None, pplat=None, hp=False):
