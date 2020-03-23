@@ -56,43 +56,75 @@
         <div class="alert alert-info" role="alert">
             Maintain PEEP of <strong>{{ new.peep }}</strong>
         </div>
+        {% if verbose %}
+        <div class="card h-100"><div class="card-body">
+            <h6 class="card-title">Change Statement</h5>
+            <pre>{{ verbose }}</pre>
+        </div></div>
+        <hr />
+        {% endif %}
         {% endif %}
     </div>
     {% endif %}
     <form id="vent" method="POST" action="/">
-        <div class="form-group">
-            <h5>Patient Information</h5>
-            <div class="form-group">
-                <div class="input-group">
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="gender" id="male" value="male" {% if gender == "male" %}checked{% endif %}>
-                        <label class="form-check-label" for="male">Male</label>
+        <h5 class="card-title">Patient Information</h5>
+        <div class="row">
+            <div class="col-md">
+                <div class="card h-100"><div class="card-body">
+                    <h5 class="card-title">Known Ideal Body Weight</h5>
+                    <label for="pbw">IBW</label>
+                    <input type="number" name="pbw" class="form-control" id="pbw" min="0" step="0.5" value="{{ pbw }}">
+                    <div class="input-group">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="weightunit" id="kg" value="kg" {% if weightunit == "kg" %}checked{% endif %}>
+                            <label class="form-check-label" for="kg">kg</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="weightunit" id="lbs" value="lbs" {% if weightunit == "lbs" %}checked{% endif %}>
+                            <label class="form-check-label" for="lbs">lbs</label>
+                        </div>
                     </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="gender" id="female" value="female" {% if gender == "female" %}checked{% endif %}>
-                        <label class="form-check-label" for="female">Female</label>
+                    <small id="pbwHelp" class="form-text text-muted">
+                        Do NOT use actual body weight
+                    </small>
+                </div></div>
+            </div>
+            <div class="col-md">
+                <div class="card"><div class="card-body">
+                    <h5 class="card-title">Calculate Ideal Body Weight</h5>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="gender" id="male" value="male" {% if gender == "male" %}checked{% endif %}>
+                                <label class="form-check-label" for="male">Male</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="gender" id="female" value="female" {% if gender == "female" %}checked{% endif %}>
+                                <label class="form-check-label" for="female">Female</label>
+                            </div>
+                        </div>
                     </div>
-                </div>
+                    <label for="height">Height</label>
+                    <input type="number" name="height" class="form-control" id="height" min="0" step="0.1"  placeholder="" value="{{ height }}">
+                    <div class="input-group">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="heightunit" id="cm" value="cm" {% if heightunit == "cm" %}checked{% endif %}>
+                            <label class="form-check-label" for="cm">cm</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="heightunit" id="in" value="in" {% if heightunit == "in" %}checked{% endif %}>
+                            <label class="form-check-label" for="in">in</label>
+                        </div>
+                    </div>
+                    <small id="heightHelp" class="form-text text-muted">
+                        Height will be used to calculate ideal body weight
+                    </small>
+                </div></div>
             </div>
-            <label for="height">Height</label>
-            <input type="number" name="height" class="form-control" id="height" min="0" step="0.1"  placeholder="" value="{{ height }}">
-            <div class="input-group">
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="unit" id="cm" value="cm" {% if unit == "cm" %}checked{% endif %}>
-                    <label class="form-check-label" for="cm">cm</label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="unit" id="in" value="in" {% if unit == "in" %}checked{% endif %}>
-                    <label class="form-check-label" for="in">in</label>
-                </div>
-            </div>
-            <small id="heightHelp" class="form-text text-muted">
-                Height will be used to calculate ideal bodyweight
-            </small>
         </div>
         <hr />
-        <div class="form-group">
-            <h5>Current Vent Settings</h5>
+        <div class="card"><div class="card-body">
+            <h5 class="card-title">Current Vent Settings</h5>
             <label for="vt">Tidal Volume</label>
             <input type="number" name="vt" class="form-control" id="vt" min="0" step="0.1" value="{{ vt }}" required>
             <div class="input-group">
@@ -106,7 +138,7 @@
                 </div>
             </div>
             <small id="vtHelp" class="form-text text-muted">
-                If Pplat < 30 and breath stacking or dys-synchrony occurs: may
+                If plateau pressure < 30 and breath stacking or dys-synchrony occurs: may
                 increase VT in 1ml/kg increments to 7 or 8 ml/kg if Pplat remains < 30 cm H2O.
             </small>
             <label for="rr">Respiratory Rate</label>
@@ -118,12 +150,12 @@
             <input type="number" name="fio2" class="form-control" id="fio2" min="0" step="1" placeholder="%" value="{{ fio2 }}" required>
             <label for="peep">PEEP</label>
             <input type="number" name="peep" class="form-control" id="peep" min="0" step="1" placeholder="" value="{{ peep }}" required>
-        </div>
+        </div></div>
         <hr />
-        <div class="form-group">
-            <h5>Current Status</h5>
+        <div class="card"><div class="card-body">
+            <h5 class="card-title">Current Status</h5>
             <label for="pao2">Oxygen</label>
-            <input type="number" name="o2" class="form-control" id="o2" min="0" step="1" value="">
+            <input type="number" name="o2" class="form-control" id="o2" min="0" step="1" placeholder="{{ lasto2 }}" value="{{ o2 }}">
             <div class="input-group">
                 <div class="form-check form-check-inline">
                     <input class="form-check-input" type="radio" name="o2type" id="pao2" value="pao2" {% if o2type == "pao2" %}checked{% endif %}>
@@ -134,16 +166,17 @@
                     <label class="form-check-label" for="spo2">SpO2</label>
                 </div>
             </div>
-            <label for="pplat">Plateu Pressure</label>
-            <input type="number" name="pplat" class="form-control" id="pplat" min="0" step="1" value="">
+            <label for="pplat">Plateau Pressure</label>
+            <input type="number" name="pplat" class="form-control" id="pplat" min="0" step="1" placeholder="{{ lastpplat }}" value="{{ pplat }}">
             <small id="pplatHelp" class="form-text text-muted">Check Pplat (0.5 second inspiratory pause), at least q 4h and after each change in PEEP or Vt</small>
             <label for="ph">pH</label>
-            <input type="number" name="ph" class="form-control" id="ph" min="6.0" max="8.0" step="0.01" value="">
+            <input type="number" name="ph" class="form-control" id="ph" min="6.0" max="8.0" step="0.01" placeholder="{{ lastph }}" value="{{ ph }}">
             <small id="pHHelp" class="form-text text-muted">
                 If pH remains < 7.15, Vt may be increased in 1 ml/kg steps until pH >
-                7.15 (Pplat target of 30 may be exceeded).
+                7.15 (plateau pressure target of 30 may be exceeded).
                 May give NaHCO3.
             </small>
+            <br />
             <div class="input-group">
                 <div class="form-check form-check-inline">
                     <input class="form-check-input" type="radio" name="strategy" id="lowpeep" value="lowpeep" {% if strategy == "lowpeep" %}checked{% endif %}>
@@ -154,9 +187,9 @@
                     <label class="form-check-label" for="highpeep">Higher PEEP Lower FiO2</label>
                 </div>
             </div>
-        </div>
+        </div></div>
         <hr />
-        <button type="submit" class="btn btn-primary">Recommend New Vent Settings</button>
+        <button type="submit" class="btn btn-primary float-center">Recommend New Vent Settings</button>
     </form>
 </div>
 <br />

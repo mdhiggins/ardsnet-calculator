@@ -17,16 +17,43 @@
         html {
             overflow-y: scroll; 
         }
+        pre {
+            white-space: pre-wrap;
+            word-break: keep-all;
+        }
         </style>
     </head>
     <body>
         <div class="container">
-            <h3>ARDSNet Calculator</h3>
+            <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                <a class="navbar-brand" href="/">ARDSNet Calculator</a>
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="http://www.ardsnet.org/files/ventilator_protocol_2008-07.pdf">ARDSNet PDF Reference</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://github.com/mdhiggins/ardsnet-calculator">Github</a>
+                    </li>
+                </ul>
+            </nav>
             <hr />
-            {% block content %}{% endblock %}
-            <div class="container">
-            <a href="http://www.ardsnet.org/files/ventilator_protocol_2008-07.pdf">ARDSNet PDF Reference</a>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            <div class="container" id="alert">
+            {% for category, message in messages %}
+                <div class="alert alert-dismissible alert-{{ category }}" role="alert">
+                        {{ message }}
+                        <button type="button" class="close" data-dismiss="alert">
+                            <span>&times;</span>
+                        </button>
+                </div>
+                <br />
+            {% endfor %}
             </div>
+            {% endif %}
+            {% endwith %}
+            {% block content %}{% endblock %}
+            <br />
         </div>
         <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>

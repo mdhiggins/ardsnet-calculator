@@ -8,21 +8,14 @@ class Gender(enum.Enum):
     Female = "female"
 
 
-class Unit(enum.Enum):
-    Centimeter = "cm"
-    Inch = "in"
-
-
 class Patient():
     __PBW_BASE_VALUE__ = {
         Gender.Male: 50.0,
         Gender.Female: 45.5,
     }
 
-    def __init__(self, gender, height, unit=Unit.Inch):
+    def __init__(self, gender, height):
         self.gender = gender
-        if unit == Unit.Centimeter:
-            height = height / 0.3937008
         self.height = height
 
     @property
@@ -46,10 +39,10 @@ class Vent():
         return self.vt / patient.pbw
 
     def setVtByWeight(self, vt, patient):
-        self.vt = vt * patient.pbw
+        self.vt = vt / patient.pbw
 
     def __str__(self):
-        return "%dml/kg %d %0.0f%% +%d" % (self.vt, self.rr, self.fio2 * 100, self.peep)
+        return "%0.02fml/kg %d %0.0f%% +%d" % (self.vt, self.rr, self.fio2 * 100, self.peep)
 
     @property
     def fio2String(self):
@@ -124,14 +117,8 @@ class ARDSNet():
         95: 80.0,
     }
 
-    def __init__(self, vent, patient=None):
-        self.patient = patient
-        self.venthistory = {}
-        self.updateVentSettings(vent)
-
-    def updateVentSettings(self, vent):
+    def __init__(self, vent):
         self.vent = vent
-        self.venthistory[datetime.now] = vent
 
     @staticmethod
     def spo2ToPaO2(spo2):
@@ -151,10 +138,9 @@ class ARDSNet():
             new.vt = self.adjustByPplat(pplat, self.vent.vt)
         if ph:
             new.vt, new.rr = self.adjustBypH(ph, new.vt, self.vent.rr)
-        if new.vt > self.__VT_GOAL__ and self.vent.vt == new.vt:
+        if round(new.vt) > self.__VT_GOAL__ and self.vent.vt == new.vt and (not ph or ph > self.__PH_MIN__):
             new.vt = round(new.vt) - 1
-        if new != self.vent:
-            self.updateVentSettings(new)
+        self.vent = new
         return new
 
     def adjustByPplat(self, pplat, vt):
