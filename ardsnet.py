@@ -58,6 +58,7 @@ class ARDSNet():
     __PPLAT_MAX__ = 30
     __PPLAT_MIN__ = 25
 
+    __RR_MIN__ = 8
     __RR_MAX__ = 35
 
     __PH_GOAL_MAX__ = 7.45
@@ -170,7 +171,7 @@ class ARDSNet():
                 vt = round(vt) + 1
                 if vt > self.__VT_MAX__:
                     vt = self.__VT_MAX__
-        elif pH < self.__PH_GOAL_MIN__ and rr < self.__RR_MAX__:
+        elif pH < self.__PH_GOAL_MIN__:
             rr = rr + 2
             if rr > self.__RR_MAX__:
                 rr = self.__RR_MAX__

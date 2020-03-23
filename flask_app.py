@@ -133,8 +133,7 @@ def flaskMainPost():
         vt = vt / pbw
 
     if round(vt) > 8 or round(vt) < 4:
-        flash("Tidal volumes outside ARDSNet range and recommendations will be inaccurate", "warning")
-        bad = True
+        flash("Tidal volumes outside ARDSNet range and recommendations may be inaccurate", "warning")
 
     if bad:
         return render_template(
