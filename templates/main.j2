@@ -7,15 +7,15 @@
     <div class="container">
         {% if new.vt > old.vt %}
         <div class="alert alert-warning" role="alert">
-            Increase tidal volume to <strong>{{ new.vt | round(2) }}</strong> ml/kg from {{ old.vt | round(2) }} ml/kg{% if absvt %} ({{ absvt | round }} ml){% endif %}
+            Increase tidal volume to <strong>{{ new.vt | round(2) }} ml/kg</strong> from {{ old.vt | round(2) }} ml/kg {% if absvt %}({{ absvt | round }} ml){% endif %}
         </div>
         {% elif new.vt < old.vt %}
         <div class="alert alert-warning" role="alert">
-            Decrease tidal volume to <strong>{{ new.vt | round(2) }}</strong> ml/kg from {{ old.vt | round(2) }} ml/kg{% if absvt %} ({{ absvt | round }} ml){% endif %}
+            Decrease tidal volume to <strong>{{ new.vt | round(2) }} ml/kg</strong> from {{ old.vt | round(2) }} ml/kg {% if absvt %}({{ absvt | round }} ml){% endif %}
         </div>
         {% else %}
         <div class="alert alert-info" role="alert">
-            Maintain tidal volume of <strong>{{ new.vt | round(2) }}</strong> ml/kg{% if absvt %} ({{ absvt | round }} ml){% endif %}
+            Maintain tidal volume of <strong>{{ new.vt | round(2) }} ml/kg</strong> {% if absvt %}({{ absvt | round }} ml){% endif %}
         </div>
         {% endif %}
         {% if new.rr > old.rr %}
@@ -64,6 +64,13 @@
         </div></div>
         <hr />
         {% endif %}
+    </div>
+    {% elif absvt %}
+    <hr />
+    <div class="container">
+        <div class="alert alert-primary" role="alert">
+            Calculated absolute tidal volume <strong>{{ absvt | round }} ml</strong>  using {{ vt }} ml/kg and {{ pbw | round(2) }} kg
+        </div>
     </div>
     {% endif %}
     <form id="vent" method="POST" action="/">

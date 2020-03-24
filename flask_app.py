@@ -135,6 +135,11 @@ def flaskMainPost():
     if round(vt) > 8 or round(vt) < 4:
         flash("Tidal volumes outside ARDSNet range and recommendations may be inaccurate", "warning")
 
+    if pbw:
+        absvt = vt * pbw
+    else:
+        absvt = 0
+
     if bad:
         return render_template(
             "main.j2",
@@ -152,7 +157,8 @@ def flaskMainPost():
             height=safeRound(heightraw, 2),
             o2=o2,
             pplat=pplat,
-            ph=ph
+            ph=ph,
+            absvt=absvt
         )
 
     # Oxygen unit conversion
