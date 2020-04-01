@@ -1,6 +1,4 @@
 import enum
-import logging
-from datetime import datetime
 
 
 class Gender(enum.Enum):
@@ -74,6 +72,9 @@ class ARDSNet():
 
     __SPO2_MIN__ = 89
     __SPO2_MAX__ = 95
+
+    __PEEP_DELTA_MAX__ = 2
+    __FIO2_DELTA_MAX__ = 0.2
 
     __LOWER_PEEP_HIGHER_FIO2__ = [
         (0.3, 5),
@@ -197,7 +198,17 @@ class ARDSNet():
             hl = [x for x in self.__LOWER_PEEP_HIGHER_FIO2__[::-1] if (x[0] <= fio2 and x[1] < peep) or (x[0] < fio2 and x[1] <= peep)]
             hh = [x for x in self.__HIGHER_PEEP_LOWER_FIO2__[::-1] if (x[0] <= fio2 and x[1] < peep) or (x[0] < fio2 and x[1] <= peep)]
             if len(hl) > 0:
-                lphf = hl[0]
+                lphf = self.changeLimiter(hl[0], fio2, peep)
             if len(hh) > 0:
-                hplf = hh[0]
+                hplf = self.changeLimiter(hh[0], fio2, peep)
         return lphf, hplf
+
+    def changeLimiter(self, pair, fio2, peep):
+        newfio2, newpeep = pair
+        if fio2 - newfio2 > self.__FIO2_DELTA_MAX__:
+            newfio2 = fio2 - self.__FIO2_DELTA_MAX__
+        if peep - newpeep > self.__PEEP_DELTA_MAX__:
+            newpeep = peep - self.__PEEP_DELTA_MAX__
+        if newpeep == 6:
+            newpeep = 5
+        return newfio2, newpeep
