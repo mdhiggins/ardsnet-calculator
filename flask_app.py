@@ -65,7 +65,7 @@ def flaskMain():
         gender=Gender.Male.value,
         heightunit=HeightUnit.Inch.value,
         weightunit=WeightUnit.Kg.value,
-        strategy="highpeep",
+        strategy="lowpeep",
         o2type=Oxygen.PaO2.value,
         vttype=Volume.Ml.value
     )
